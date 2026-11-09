@@ -53,6 +53,9 @@ section{scroll-margin-top:88px}
 .nav a.link:hover{color:var(--ink);background:rgba(255,255,255,.6)}
 .nav-right{display:flex;align-items:center;gap:6px}
 .nav-edit{display:flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:999px;border:0;background:var(--ink);color:#fff;font-size:13.5px}
+.nav-edit.ghosty{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.nav-edit.ghosty svg{stroke:var(--ink)}
+@media (max-width:560px){.nav-edit span{display:none}.nav-edit{width:36px;padding:0;justify-content:center}}
 .nav-edit svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .swap{display:flex;align-items:center;gap:10px;border:0;background:none;padding:4px 6px 4px 10px;border-radius:999px;font-size:13px;color:var(--muted)}
 .swap .track{position:relative;width:52px;height:30px;border-radius:999px;border:1.5px solid var(--accent-soft);background:color-mix(in srgb,#fff 55%,transparent);transition:border-color .6s}
@@ -228,7 +231,7 @@ legend{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transf
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .check{display:flex;align-items:center;gap:8px;font-size:14px;margin:0 0 12px}
 .check input{width:18px;height:18px;accent-color:var(--accent)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:40px;padding:0 16px;border-radius:999px;border:1px solid rgba(14,18,32,.14);background:#fff;font-size:14px;white-space:nowrap}
+.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:40px;padding:0 16px;border-radius:999px;border:1px solid rgba(14,18,32,.14);background:#fff;font-size:14px;white-space:nowrap}
 .btn:hover{border-color:var(--ink)}
 .btn.primary{background:var(--ink);border-color:var(--ink);color:#fff}
 .btn.small{height:34px;padding:0 12px;font-size:13px}
@@ -303,6 +306,9 @@ legend{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transf
       <li><a class="link" href="#contato">Contato</a></li>
     </ul>
     <div class="nav-right">
+    <button class="nav-edit ghosty" id="navLink" type="button" hidden aria-label="Gerar link do cartão do cliente">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>Gerar link</span>
+    </button>
     <button class="nav-edit" id="navEdit" type="button" hidden aria-label="Editar página">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></svg><span>Editar</span>
     </button>
@@ -411,6 +417,42 @@ legend{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transf
       <span class="spacer"></span>
       <button class="btn" type="button" id="edCancel">Cancelar</button>
       <button class="btn primary" type="button" id="edSave">Salvar</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="linkDlg" aria-labelledby="lkTitle">
+  <div class="sheet" style="max-height:88vh;overflow:auto">
+    <div class="sheet-head"><h3 id="lkTitle">Link do cartão do cliente</h3><button class="x" type="button" data-close aria-label="Fechar">×</button></div>
+    <p class="hint" style="font-size:14px;margin-bottom:14px">Gera a versão só de visualização do teu portfólio. Quem abrir o link vê as obras e consegue te chamar, mas não edita nada.</p>
+    <div id="lkResult" hidden>
+      <div class="mailbox"><code id="lkUrl"></code><button type="button" id="lkCopy">Copiar</button></div>
+      <div class="item-tools" style="margin:10px 0 6px">
+        <button class="btn small" type="button" id="lkShare" hidden>Enviar…</button>
+        <a class="btn small" id="lkOpen" href="#" target="_blank" rel="noopener noreferrer">Abrir</a>
+      </div>
+      <p class="hint" id="lkNote"></p>
+    </div>
+    <div id="lkGh">
+      <details id="lkSetup">
+        <summary style="cursor:pointer;font-weight:500;margin:4px 0 12px">Conexão com o GitHub (só na primeira vez)</summary>
+        <div class="g2">
+          <div class="f"><label for="ghOwner">Usuário do GitHub</label><input type="text" id="ghOwner" autocomplete="off" spellcheck="false"></div>
+          <div class="f"><label for="ghRepo">Repositório</label><input type="text" id="ghRepo" autocomplete="off" spellcheck="false"></div>
+        </div>
+        <div class="f"><label for="ghToken">Token de acesso</label><input type="password" id="ghToken" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
+          <small>Fica guardado só neste navegador e não vai no cartão. Para criar: GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token. Em "Repository access", escolha só o repositório do portfólio. Em "Permissions", ponha "Contents" em "Read and write".</small>
+        </div>
+        <button class="btn small" type="button" id="ghForget">Esquecer token</button>
+      </details>
+      <div class="item-tools" style="margin-top:14px">
+        <button class="btn primary" type="button" id="lkPublish">Publicar e gerar link</button>
+        <button class="btn" type="button" id="lkDownload">Só baixar cartao.html</button>
+      </div>
+    </div>
+    <div id="lkClaude" hidden>
+      <p class="hint" style="font-size:14px">Aqui dentro do Claude não dá para publicar no GitHub. Baixe o cartão e suba no teu repositório, ou use o botão Gerar link no teu site do GitHub.</p>
+      <button class="btn primary" type="button" id="lkDownload2">Baixar cartao.html</button>
     </div>
   </div>
 </dialog>
@@ -674,7 +716,7 @@ if (!reduce) {
 let lastFocus = null;
 function openDlg(id) { const d = document.getElementById(id); lastFocus = document.activeElement; if (!d.open) d.showModal(); }
 document.querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => openDlg(b.dataset.open)));
-document.querySelectorAll("#contactDlg,#viewer").forEach(d => {
+document.querySelectorAll("#contactDlg,#viewer,#linkDlg").forEach(d => {
   d.addEventListener("click", e => { if (e.target === d) d.close(); });
   d.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", () => d.close()));
   d.addEventListener("close", () => { if (lastFocus && lastFocus.focus) lastFocus.focus(); });
@@ -762,7 +804,7 @@ const idb = {
   async set(k, v) { const db = await this.open(); return new Promise((res, rej) => { const t = db.transaction("kv", "readwrite"); t.objectStore("kv").put(v, k); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); }
 };
 
-function showEdit() { backend.canEdit = true; $("#editFab").hidden = false; $("#navEdit").hidden = false; }
+function showEdit() { backend.canEdit = true; $("#editFab").hidden = false; $("#navEdit").hidden = false; $("#navLink").hidden = false; }
 async function waitForClaude(ms) {
   const t0 = Date.now();
   while (Date.now() - t0 < ms) {
@@ -1018,6 +1060,82 @@ function exportBtn(id, label, file, locked, done) {
 }
 exportBtn("#edClient", "Gerar cartão do cliente", "cartao.html", true, "cartao.html pronto. Suba no GitHub e mande o link .../cartao.html para o cliente.");
 exportBtn("#edExport", "Baixar minha versão", "index.html", false, "index.html pronto. É a tua versão editável.");
+
+/* ---------- Gerar link: publica o cartão do cliente no GitHub Pages ---------- */
+const GH = { owner: "", repo: "", token: "" };
+const b64 = str => { const by = new TextEncoder().encode(str); let bin = ""; for (let i = 0; i < by.length; i += 0x8000) bin += String.fromCharCode.apply(null, by.subarray(i, i + 0x8000)); return btoa(bin); };
+const NAME_RE = /^[A-Za-z0-9_.-]{1,100}$/;
+function pagesUrl(o, r) { const lo = o.toLowerCase(); return r.toLowerCase() === lo + ".github.io" ? `https://${lo}.github.io/cartao.html` : `https://${lo}.github.io/${r}/cartao.html`; }
+function showLink(url, note) {
+  $("#lkResult").hidden = false; $("#lkUrl").textContent = url; $("#lkOpen").href = url; $("#lkNote").textContent = note || "";
+  $("#lkShare").hidden = !navigator.share;
+}
+async function openLinkDlg() {
+  const inClaude = backend.mode === "cloud" || !!window.claude;
+  $("#lkGh").hidden = inClaude; $("#lkClaude").hidden = !inClaude;
+  if (!inClaude) {
+    let cfg = null; try { cfg = await idb.get("gh"); } catch {}
+    if (cfg) Object.assign(GH, cfg);
+    if (!GH.owner && location.hostname.endsWith(".github.io")) {
+      GH.owner = location.hostname.split(".")[0];
+      const seg = location.pathname.split("/").filter(Boolean)[0];
+      GH.repo = seg && !seg.endsWith(".html") ? seg : GH.owner + ".github.io";
+    }
+    $("#ghOwner").value = GH.owner; $("#ghRepo").value = GH.repo; $("#ghToken").value = GH.token;
+    $("#lkSetup").open = !GH.token;
+    if (cfg && cfg.lastUrl) showLink(cfg.lastUrl, "Este é o teu link. Publique de novo sempre que mudar algo, e o mesmo link mostra a versão nova.");
+  }
+  openDlg("linkDlg");
+}
+$("#navLink").addEventListener("click", openLinkDlg);
+async function ghFetch(method, path, body) {
+  return fetch("https://api.github.com" + path, {
+    method, cache: "no-store",
+    headers: { Authorization: "Bearer " + GH.token, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...(body ? { "Content-Type": "application/json" } : {}) },
+    body: body ? JSON.stringify(body) : undefined
+  });
+}
+$("#lkPublish").addEventListener("click", async () => {
+  GH.owner = $("#ghOwner").value.trim(); GH.repo = $("#ghRepo").value.trim(); GH.token = $("#ghToken").value.trim();
+  if (!NAME_RE.test(GH.owner) || !NAME_RE.test(GH.repo)) { $("#lkSetup").open = true; return toast("Confira o usuário e o repositório do GitHub."); }
+  if (!GH.token) { $("#lkSetup").open = true; return toast("Cole o token de acesso do GitHub."); }
+  const b = $("#lkPublish"); b.disabled = true; b.textContent = "Publicando…";
+  try {
+    const base = `/repos/${encodeURIComponent(GH.owner)}/${encodeURIComponent(GH.repo)}`;
+    const repo = await ghFetch("GET", base);
+    if (repo.status === 401) throw new Error("O token não funcionou. Confira se copiou certinho ou se ele venceu.");
+    if (!repo.ok) throw new Error("Não achei esse repositório, ou o token não tem acesso a ele.");
+    const branch = (await repo.json()).default_branch || "main";
+    const html = await buildHtml(data, true), content = b64(html);
+    const put = async () => {
+      const cur = await ghFetch("GET", `${base}/contents/cartao.html?ref=${encodeURIComponent(branch)}`);
+      const sha = cur.ok ? (await cur.json()).sha : undefined;
+      return ghFetch("PUT", `${base}/contents/cartao.html`, { message: "Atualiza cartão do cliente", content, branch, ...(sha ? { sha } : {}) });
+    };
+    let r = await put();
+    if (r.status === 409 || r.status === 422) r = await put();
+    if (r.status === 403 || r.status === 404) throw new Error("O token não tem permissão de escrita. Em Permissions, ponha Contents em Read and write.");
+    if (!r.ok) throw new Error("O GitHub recusou o envio agora. Tente de novo em instantes.");
+    const url = pagesUrl(GH.owner, GH.repo);
+    try { await idb.set("gh", { owner: GH.owner, repo: GH.repo, token: GH.token, lastUrl: url }); } catch {}
+    $("#lkSetup").open = false;
+    showLink(url, "Publicado! O GitHub leva 1 a 2 minutos para atualizar o link.");
+    toast("Link pronto");
+  } catch (e) { toast(e && e.message && !/fetch/i.test(e.message) ? e.message : "Sem conexão com o GitHub. Confira a internet e tente de novo.", 5200); }
+  finally { b.disabled = false; b.textContent = "Publicar e gerar link"; }
+});
+$("#ghForget").addEventListener("click", async () => {
+  GH.token = ""; $("#ghToken").value = "";
+  try { const c = (await idb.get("gh")) || {}; delete c.token; await idb.set("gh", c); } catch {}
+  toast("Token apagado deste navegador");
+});
+$("#lkCopy").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText($("#lkUrl").textContent); toast("Link copiado"); }
+  catch { const r = document.createRange(); r.selectNodeContents($("#lkUrl")); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(r); toast("Selecionado: use Ctrl+C"); }
+});
+$("#lkShare").addEventListener("click", async () => { try { await navigator.share({ title: data.name, text: "Meu portfólio", url: $("#lkUrl").textContent }); } catch {} });
+const dl = async () => { try { await saveFile("cartao.html", await buildHtml(data, true)); toast("cartao.html pronto. Suba no GitHub."); } catch (e) { if (!(e && e.code === "declined")) toast("Não consegui gerar o arquivo agora."); } };
+$("#lkDownload").addEventListener("click", dl); $("#lkDownload2").addEventListener("click", dl);
 </script>
 </body>
 </html>
